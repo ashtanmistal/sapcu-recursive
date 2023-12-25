@@ -7,6 +7,15 @@ This also adapts the algorithm to run on `.obj` files as opposed to `.ply` files
 ## Usage
 
 Intended usage is for large point clouds (e.g. buildings; tested on 100k points). 
+To run the algorithm, run `python generate.py`. The following arguments are available:
+```
+--input: input path (directory to .obj files)
+--output: output path (directory to save .obj files)
+--upsample: upsample amount (e.g. 2 for 2x upsampling)
+--cuda: use cuda
+--color: filter color (Algorithm will upsample points of this color)
+```
+
 
 The color motivation of the color handling is for the use case of color being used as labels (e.g. output from a semantic segmentation algorithm like PointNet++). In this case, the user should specify the color corresponding to the label, and the algorithm will upsample the points belonging to that label.
 
