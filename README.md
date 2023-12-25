@@ -1,6 +1,6 @@
 # SAPCU-Recursive
 
-This is a recursive implementation of the SAPCU algorithm. The original implementation has a limit of 5000 points. This implementation can handle point clouds of any size, and recursively subdivides the point cloud based on the median of the largest dimension on each split, and stitches the results together.
+This is a recursive implementation of the SAPCU algorithm. The original implementation has a limit of 5000 points. This implementation can handle point clouds of any size without the need to modify the size of the kdtree, and recursively subdivides the point cloud based on the median of the largest dimension on each split, and stitches the results together.
 
 This also adapts the algorithm to run on `.obj` files as opposed to `.ply` files; this does require the point cloud to have either the same color for all points, or for the upsampling to only be ran on one color.
 
