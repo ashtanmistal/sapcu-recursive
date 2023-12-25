@@ -1,3 +1,22 @@
+# SAPCU-Recursive
+
+This is a recursive implementation of the SAPCU algorithm. The original implementation has a limit of 5000 points. This implementation can handle point clouds of any size, and recursively subdivides the point cloud based on the median of the largest dimension on each split, and stitches the results together.
+
+This also adapts the algorithm to run on `.obj` files as opposed to `.ply` files; this does require the point cloud to have either the same color for all points, or for the upsampling to only be ran on one color.
+
+## Usage
+
+Intended usage is for large point clouds (e.g. buildings; tested on 100k points). 
+
+The color motivation of the color handling is for the use case of color being used as labels (e.g. output from a semantic segmentation algorithm like PointNet++). In this case, the user should specify the color corresponding to the label, and the algorithm will upsample the points belonging to that label.
+
+## Notes
+
+- The recursive nature does leave some visible seams in the split. A fix is planned to be implemented in the future; this will involve a more complex stitching process and a blending of the seams as opposed to a simple concatenation.
+- Further efficiency improvements are planned.
+
+___
+
 # SAPCU
 【Code of CVPR 2022 paper】 
 
