@@ -6,7 +6,7 @@ This also adapts the algorithm to run on `.obj` files as opposed to `.xyz` files
 
 ## Usage
 
-Intended usage is for large point clouds (e.g. buildings; tested on 100k points). 
+Intended usage is for large point clouds (e.g. buildings; tested on ~100k points). 
 To run the algorithm, run `python generate.py`. The following arguments are available:
 ```
 --input: input path (directory to .obj files)
