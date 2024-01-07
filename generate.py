@@ -78,10 +78,21 @@ def subdivide_and_upsample(cloud, upsample_amount, generator):
     else:
         # subdivide the pointcloud into 2 based on a median plane that splits x, y, or z in half based on
         # the largest dimension
+        # We also need to blend between the two halves to avoid a sharp edge or visible seam.
+        # As a result we extend the left and right bounds by 5% of the median value
+        # and perform linear blending between the two halves once they are upsampled.
         largest_dim = np.argmax(bbox[1] - bbox[0])
         median = np.median(cloud[:, largest_dim])
-        pc1 = subdivide_and_upsample(cloud[cloud[:, largest_dim] < median], upsample_amount, generator)
-        pc2 = subdivide_and_upsample(cloud[cloud[:, largest_dim] >= median], upsample_amount, generator)
+        blend_level = 0.05
+        left_blend = median - (bbox[1][largest_dim] - bbox[0][largest_dim]) * blend_level
+        right_blend = median + (bbox[1][largest_dim] - bbox[0][largest_dim]) * blend_level
+        pc1 = subdivide_and_upsample(cloud[cloud[:, largest_dim] < right_blend], upsample_amount, generator)
+        pc2 = subdivide_and_upsample(cloud[cloud[:, largest_dim] >= left_blend], upsample_amount, generator)
+        # TODO try blending the two halves by linear random interpolation
+
+        pc1[:, largest_dim] = pc1[:, largest_dim] * (1 - blend_level) + median * blend_level
+        pc2[:, largest_dim] = pc2[:, largest_dim] * blend_level + median * (1 - blend_level)
+
         return np.concatenate((pc1, pc2), axis=0)
 
 
@@ -142,6 +153,17 @@ def main(args):
 
     # sort by file size (assists with faster debugging)
     data_list, out_list = zip(*sorted(zip(data_list, out_list), key=lambda x: os.path.getsize(x[0])))
+
+    # remove from data_list and out_list if the output file already exists
+    to_delete = []
+    data_list = list(data_list)
+    out_list = list(out_list)
+    for i in range(len(data_list)):
+        if os.path.exists(out_list[i]):
+            to_delete.append(i)
+    for i in reversed(to_delete):
+        del data_list[i]
+        del out_list[i]
 
     is_cuda = args.cuda and torch.cuda.is_available()
     device = torch.device("cuda" if is_cuda else "cpu")
